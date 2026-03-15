@@ -59,7 +59,6 @@ export default class QQBotConfig extends ConfigBase {
               template: {
                 type: 'string',
                 label: '模板ID序列',
-                default: 'abcdefghij',
                 component: 'Input'
               }
             }
@@ -85,6 +84,10 @@ export default class QQBotConfig extends ConfigBase {
         }
       }
     });
+  }
+
+  async write(data, options = {}) {
+    return await super.write(data, { ...options, cleanEmpty: true });
   }
 
   async addToken(token) {
