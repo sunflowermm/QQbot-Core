@@ -1,0 +1,14 @@
+# 依赖
+node_modules/
+
+# 环境与敏感
+.env
+.env.*
+.env.local
+
+# 日志与临时
+*.log
+.DS_Store
+
+# 本地覆盖（可选：若不想把 data/QQBot.json 纳入版本控制可取消下一行注释）
+# data/QQBot.json
