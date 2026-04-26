@@ -162,7 +162,21 @@ Bot.tasker.push(
       Bot[id].sdk.logger = {}
       for (const i of ["trace", "debug", "info", "mark", "warn", "error", "fatal"]) {
         Bot[id].sdk.logger[i] = (...args) => {
-          if (args[0]?.startsWith?.("recv from")) return
+          // 过滤 SDK 内部高频噪声日志（不影响业务事件处理）
+          const first = args?.[0]
+          if (first?.startsWith?.("recv from")) return
+          if (typeof first === 'string') {
+            if (first.includes('心跳校验')) return
+            if (first.includes('收到消息')) {
+              try {
+                // 典型：`收到消息:` + {"op":11}
+                const payload = args?.[1]
+                if (payload?.op === 11) return
+                const joined = JSON.stringify(args)
+                if (joined.includes('"op":11')) return
+              } catch {}
+            }
+          }
           return Bot.makeLog(i, args, id)
         }
       }
