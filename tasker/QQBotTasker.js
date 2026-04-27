@@ -169,11 +169,18 @@ Bot.tasker.push(
             if (first.includes('心跳校验')) return
             if (first.includes('收到消息')) {
               try {
-                // 典型：`收到消息:` + {"op":11}
+                // 典型：`收到消息:` + {"op":11}，也可能是字符串化 JSON（含转义）
                 const payload = args?.[1]
                 if (payload?.op === 11) return
-                const joined = JSON.stringify(args)
-                if (joined.includes('"op":11')) return
+                const isHeartbeat = args.some((item) => {
+                  if (!item) return false
+                  if (typeof item === 'object') return item.op === 11
+                  if (typeof item === 'string') {
+                    return /"op"\s*:\s*11/.test(item) || /\\"op\\"\s*:\s*11/.test(item)
+                  }
+                  return false
+                })
+                if (isHeartbeat) return
               } catch {}
             }
           }
